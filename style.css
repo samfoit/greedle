@@ -1,0 +1,48 @@
+body {
+    background-color: #121213;
+}
+
+div {
+    color: white;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.dice-container {
+    display: grid;
+    grid-template-rows: repeat(6, 1fr);
+    grid-gap: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+    width: 350px;
+    height: 420px;
+    margin: auto;
+}
+
+.dice-roll-row {
+    min-height: 62.5px;
+    max-width: auto;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-gap: 5px;
+}
+
+.dice {
+    width: 48px;
+    height: 48px;
+    border: solid #363636 2px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    padding-top: 50px;
+}
+
+.logo {
+    font-size: 28px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}

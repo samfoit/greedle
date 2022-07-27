@@ -1,3 +1,4 @@
+const container = document.querySelector('.dice-container');
 
 
 function game(){
