@@ -4,7 +4,7 @@ const diceImgs = ["images/dice1.png", "images/dice2.png", "images/dice3.png", "i
 
 // buttons
 const rollButton = document.querySelector('.roll-button');
-rollButton.onclick = function() {rollButton();}
+rollButton.onclick = function() {roll();}
 
 // every dice element
 const diceContainers = document.querySelectorAll('.dice');
@@ -12,18 +12,18 @@ const diceContainers = document.querySelectorAll('.dice');
 // global variables
 let diceNumber = 0;
 let dice = 6;
-let score = 0;
+let points = 0;
 
-function rollButton(){
-    let greedy = roll(dice);
+function roll(){
+    let greed = greedy(dice);
 
-    if (greedy[0] == 0){
+    if (greed[0] == 0){
         console.log("you skunked!");
         return;
     }
     
-    score += greedy[0];
-    dice -= greedy[1];
+    points += greed[0];
+    dice -= greed[1];
 
     if (dice == 0)
         dice = 6;
@@ -35,7 +35,7 @@ function passButton(){
 }
 
 
-function roll(dice){
+function greedy(dice){
     let rolls = [];
     for (let i = 0; i < dice; i++){
         rolls[i] = Math.floor((Math.random() * 6) + 1);
