@@ -14,6 +14,7 @@ div {
     justify-content: space-between;
     padding: 0px 16px 5px 16px;
     border-bottom: 1px solid #3a3a3c;
+    width: 100%;
 }
 
 .dice-container {

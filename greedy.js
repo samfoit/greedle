@@ -14,6 +14,14 @@ let diceNumber = 0;
 let dice = 6;
 let points = 0;
 
+
+// TODO: Add score
+// TODO: Add and remove buttons when necessary
+// TODO: Add explanation popup
+// TODO: Add sharing
+// TODO: Add saving of game state and your done
+// TODO: Flip animation
+// TODO: Have the container reset on all dice scored
 function roll(){
     let greed = greedy(dice);
 
@@ -39,11 +47,21 @@ function greedy(dice){
     let rolls = [];
     for (let i = 0; i < dice; i++){
         rolls[i] = Math.floor((Math.random() * 6) + 1);
+        console.log(rolls[i]);
+    }
+
+    for (let i = 0; i < dice; i++){
         const diceImage = document.createElement('img');
         diceImage.src = diceImgs[rolls[i] - 1];
+        if (rolls[i] == 1 || rolls[i] == 5 || findCount(rolls[i], rolls) >= 3){
+            diceImage.style.backgroundColor = "#538d4e";
+        }
         diceContainers[diceNumber].appendChild(diceImage);
         diceNumber++;
-        console.log(rolls[i]);
+    }
+
+    while (diceNumber % 6 != 0){
+        diceNumber++;
     }
     let game = score(rolls);
 
@@ -58,7 +76,7 @@ function score(rolls){
         let count = findCount(i, rolls);
         let triple = Math.floor(count / 3);
 
-        if (triple > 0 && i != 1 || i != 5){
+        if (triple > 0 && i != 1 && i != 5){
             newScore += triple * (i * 100);
             diceUsed += triple * 3;
         }
