@@ -5,6 +5,7 @@ const diceImgs = ["images/dice1.png", "images/dice2.png", "images/dice3.png", "i
 // buttons
 const rollButton = document.querySelector('.roll-button');
 rollButton.onclick = function() {roll();}
+const scoreboard = document.querySelector('.score');
 
 // every dice element
 const diceContainers = document.querySelectorAll('.dice');
@@ -23,15 +24,17 @@ let points = 0;
 // TODO: Flip animation
 // TODO: Have the container reset on all dice scored
 function roll(){
-    let greed = greedy(dice);
+    let greedyResult = greedy(dice);
 
-    if (greed[0] == 0){
+    if (greedyResult[0] == 0){
         console.log("you skunked!");
+        updateScore('Skunked');
         return;
     }
     
-    points += greed[0];
-    dice -= greed[1];
+    points += greedyResult[0];
+    dice -= greedyResult[1];
+    updateScore(points);
 
     if (dice == 0)
         dice = 6;
@@ -109,4 +112,33 @@ function findCount(num, rolls){
     }
 
     return count;
+}
+
+function updateScore(score){
+    if (typeof score === 'string'){
+        scoreboard.textContent = score;
+    } else {
+       const id = setInterval(incrementScoreboard, 10);
+
+       function incrementScoreboard(){
+        let score = parseInt(scoreboard.textContent);
+        if (score == points){
+            clearInterval(id);
+        }
+        else {
+            score += 1;
+            scoreboard.textContent = score;
+        }
+      }
+    }
+}
+
+async function wait(){
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return 0;
+}
+
+// Wait function for javascript in seconds
+function delay(time){
+    return new Promise(resolve => setTimeout(resolve, time));
 }
