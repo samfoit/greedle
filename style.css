@@ -46,6 +46,15 @@ div {
     display: flex;
     justify-content: center;
     padding-top: 50px;
+    gap: 20px;
+}
+
+.buttons button {
+    border: none;
+    background-color: #363636;
+    color: #ffffff;
+    border-radius: 2px;
+    padding: 5px 20px;
 }
 
 .logo {

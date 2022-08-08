@@ -14,21 +14,22 @@ const diceContainers = document.querySelectorAll('.dice');
 let diceNumber = 0;
 let dice = 6;
 let points = 0;
+let passButtonCreated = false;
 
 
-// TODO: Add score
-// TODO: Add and remove buttons when necessary
 // TODO: Add explanation popup
 // TODO: Add sharing
 // TODO: Add saving of game state and your done
 // TODO: Flip animation
 // TODO: Have the container reset on all dice scored
 function roll(){
+    createPassButton();
+
     let greedyResult = greedy(dice);
 
     if (greedyResult[0] == 0){
-        console.log("you skunked!");
-        updateScore('Skunked');
+        points = -1;
+        endGame();
         return;
     }
     
@@ -38,11 +39,6 @@ function roll(){
 
     if (dice == 0)
         dice = 6;
-}
-
-function passButton(){
-    console.log("you take " + score + " points!");
-    dice = 0;
 }
 
 
@@ -133,12 +129,24 @@ function updateScore(score){
     }
 }
 
-async function wait(){
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return 0;
+function endGame(){
+    if (points == -1){
+        updateScore('Skunked 😂');
+    }
+    rollButton.remove();
+    passButton.remove();
+    // Show result popup screen
 }
 
-// Wait function for javascript in seconds
-function delay(time){
-    return new Promise(resolve => setTimeout(resolve, time));
+function createPassButton(){
+    if (!passButtonCreated) {
+        let pButton = document.createElement('button');
+        pButton.classList.add("pass-button");
+        pButton.textContent = "Pass";
+        pButton.onclick = function() { endGame() };
+        const buttonContainer = document.querySelector('.buttons');
+        buttonContainer.appendChild(pButton);
+        passButton = document.querySelector('.pass-button');
+        passButtonCreated = true;
+    }
 }
