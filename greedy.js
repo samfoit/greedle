@@ -1,11 +1,24 @@
 
 // array of dice images
 const diceImgs = ["images/dice1.png", "images/dice2.png", "images/dice3.png", "images/dice4.png", "images/dice5.png", "images/dice6.png"];
+const diceText = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "⚫️", "🦨"];
 
 // buttons
 const rollButton = document.querySelector('.roll-button');
-rollButton.onclick = function() {roll();}
+rollButton.onclick = function() {roll();};
 const scoreboard = document.querySelector('.score');
+
+const helpButton = document.querySelector('.info');
+const helpModal = document.querySelector('#help-modal-container');
+helpButton.onclick = function () {helpModal.style.display = "block";};
+const closeHelpModal = document.querySelector('#close-info');
+closeHelpModal.onclick = function() {helpModal.style.display = "none";};
+
+window.onclick = function(event) {
+    if (event.target == helpModal) {
+      helpModal.style.display = "none";
+    }
+}
 
 // every dice element
 const diceContainers = document.querySelectorAll('.dice');
@@ -17,7 +30,6 @@ let points = 0;
 let passButtonCreated = false;
 
 
-// TODO: Add explanation popup
 // TODO: Add sharing
 // TODO: Add saving of game state and your done
 // TODO: Flip animation
@@ -136,6 +148,7 @@ function endGame(){
     rollButton.remove();
     passButton.remove();
     // Show result popup screen
+    scoreModal();
 }
 
 function createPassButton(){
@@ -149,4 +162,32 @@ function createPassButton(){
         passButton = document.querySelector('.pass-button');
         passButtonCreated = true;
     }
+}
+
+function scoreModal(){
+    const scoreModalContainer = document.querySelector('#score-modal-container');
+    const closeScoreModal = document.querySelector('#close-score');
+    const pointsDisplay = document.querySelector('#modal-points');
+    const shareButton = document.querySelector('.share-button');
+
+    scoreModalContainer.style.display = 'block';
+    closeScoreModal.onclick = function() {scoreModalContainer.style.display = 'none';};
+    if (points == -1){
+        pointsDisplay.textContent = '🦨';
+    }
+    else {
+        const id = setInterval(increment, 7);
+
+       function increment(){
+        let score = parseInt(pointsDisplay.textContent);
+        if (score == points){
+            clearInterval(id);
+        }
+        else {
+            score += 1;
+            pointsDisplay.textContent = score;
+        }
+      }
+    }
+
 }
