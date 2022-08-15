@@ -226,4 +226,8 @@ function scoreModal(){
 
 function shareMsg(){
     navigator.clipboard.writeText(finalScoreMsg);
+
+    if (navigator.userAgent.match(/iPhone/i)){
+        window.open(`sms:&body=${finalScoreMsg}`, '_self');
+    }
 }
