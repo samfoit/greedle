@@ -31,7 +31,6 @@ let dice = 6;
 let points = 0;
 let passButtonCreated = false;
 
-// TODO: Learn how to open imessage for phones in javascript
 // TODO: Add saving of game state and your done
 function roll(){
     createPassButton();
