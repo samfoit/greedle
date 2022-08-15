@@ -94,7 +94,7 @@ function greedy(dice){
                 finalScoreMsg += diceText[rolls[i] - 1];
             }
         }
-        finalScoreMsg += '\n';
+        finalScoreMsg += '\r\n';
     }
     return game;
 }
@@ -218,16 +218,16 @@ function scoreModal(){
         }
       }
     }
-    let formattedMsg = finalScoreMsg.replace(/(\n)/g, '\r\n');
-    finalScore.textContent = formattedMsg;
-
-    finalScoreMsg += 'score: ' + points;
+    finalScore.textContent = finalScoreMsg;
+    if (points != -1){
+        finalScoreMsg += '%0aGreedle score: ' + points;
+    }
 }
 
 function shareMsg(){
     navigator.clipboard.writeText(finalScoreMsg);
-
     if (navigator.userAgent.match(/iPhone/i)){
-        window.open(`sms:&body=${finalScoreMsg}`, '_self');
+        let formattedMsg = finalScoreMsg.replace(/\r\n/g, '%0a');
+        window.open(`sms:?&body=${formattedMsg}`, '_self');
     }
 }
