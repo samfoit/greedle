@@ -14,6 +14,8 @@ helpButton.onclick = function () {helpModal.style.display = "block";};
 const closeHelpModal = document.querySelector('#close-info');
 closeHelpModal.onclick = function() {helpModal.style.display = "none";};
 
+let finalScoreMsg = '';
+
 window.onclick = function(event) {
     if (event.target == helpModal) {
       helpModal.style.display = "none";
@@ -29,11 +31,8 @@ let dice = 6;
 let points = 0;
 let passButtonCreated = false;
 
-
-// TODO: Add sharing
+// TODO: Learn how to open imessage for phones in javascript
 // TODO: Add saving of game state and your done
-// TODO: Flip animation
-// TODO: Have the container reset on all dice scored
 function roll(){
     createPassButton();
 
@@ -67,6 +66,13 @@ function greedy(dice){
         if (rolls[i] == 1 || rolls[i] == 5 || findCount(rolls[i], rolls) >= 3){
             diceImage.style.backgroundColor = "#538d4e";
         }
+
+        if (diceNumber >= 36){
+            // reset all the dice
+            diceContainers.forEach(clearDiceContainer);
+            diceNumber = 0;
+        }
+
         diceContainers[diceNumber].appendChild(diceImage);
         diceNumber++;
     }
@@ -76,7 +82,28 @@ function greedy(dice){
     }
     let game = score(rolls);
 
+    if (game[0] == 0){
+        finalScoreMsg += '🦨💨🦨💨🦨💨';
+    }
+    else {
+        for (let i = 0; i < 6; i++){
+            if (i > rolls.length - 1){
+                finalScoreMsg += diceText[6];
+            }
+            else {
+                finalScoreMsg += diceText[rolls[i] - 1];
+            }
+        }
+        finalScoreMsg += '\n';
+    }
     return game;
+}
+
+function clearDiceContainer(item){
+    let dice = item.lastElementChild;
+    if (dice != null){
+        item.removeChild(dice);
+    }
 }
 
 function score(rolls){
@@ -166,10 +193,12 @@ function createPassButton(){
 
 function scoreModal(){
     const scoreModalContainer = document.querySelector('#score-modal-container');
+    const finalScore = document.querySelector('#final-score-msg');
     const closeScoreModal = document.querySelector('#close-score');
     const pointsDisplay = document.querySelector('#modal-points');
     const shareButton = document.querySelector('.share-button');
 
+    shareButton.onclick = function() {shareMsg(); };
     scoreModalContainer.style.display = 'block';
     closeScoreModal.onclick = function() {scoreModalContainer.style.display = 'none';};
     if (points == -1){
@@ -189,5 +218,12 @@ function scoreModal(){
         }
       }
     }
+    let formattedMsg = finalScoreMsg.replace(/(\n)/g, '\r\n');
+    finalScore.textContent = formattedMsg;
 
+    finalScoreMsg += 'score: ' + points;
+}
+
+function shareMsg(){
+    navigator.clipboard.writeText(finalScoreMsg);
 }
