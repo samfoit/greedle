@@ -1,6 +1,6 @@
 
 // array of dice images
-const diceImgs = ["images/dice1.png", "images/dice2.png", "images/dice3.png", "images/dice4.png", "images/dice5.png", "images/dice6.png"];
+const diceImgs = ["images/dice1.png", "images/dice2.png", "images/dice3.png", "images/dice4.png", "images/dice5.png", "images/dice6.png", "images/blank.png"];
 const diceText = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "⚫️", "🦨"];
 
 // buttons
@@ -15,6 +15,9 @@ const closeHelpModal = document.querySelector('#close-info');
 closeHelpModal.onclick = function() {helpModal.style.display = "none";};
 
 let finalScoreMsg = '';
+
+const midnight = new Date();
+midnight.setHours(23, 59, 59, 0);
 
 window.onclick = function(event) {
     if (event.target == helpModal) {
@@ -31,7 +34,37 @@ let dice = 6;
 let points = 0;
 let passButtonCreated = false;
 
-// TODO: Add saving of game state and your done
+
+// check if cookies exist
+if (Cookies.get('points') != null){
+    points = parseInt(Cookies.get('points'));
+    dice = parseInt((Cookies.get('dice')));
+    let diceImages = Cookies.get('diceImage');
+    diceImages = diceImages.split(' ');
+    let greenDice = Cookies.get('greenDice');
+    greenDice = greenDice.split(' ');
+    for (let i = 0; i < diceImages.length - 1; i++){
+        const diceImage = document.createElement('img');
+        diceImage.src = diceImages[i + 1];
+        if (greenDice[i + 1] == 'true'){
+            diceImage.style.backgroundColor = "#538d4e";
+        }
+        diceContainers[diceNumber].appendChild(diceImage);
+        diceNumber++;
+    }
+
+    const pBoard = document.querySelector('.score');
+    pBoard.textContent = points;
+    finalScoreMsg = Cookies.get('finalScoreMsg');
+
+    if (Cookies.get('gameover') != null){
+        endGame();
+    }
+}
+
+// TODO: Yellow with a bump for 1s
+// TODO: Add a rolling animation for the dice
+// TODO: Add animation for the score modal popup
 function roll(){
     createPassButton();
 
@@ -39,12 +72,15 @@ function roll(){
 
     if (greedyResult[0] == 0){
         points = -1;
+        Cookies.set('points', points, { expires: midnight});
         endGame();
         return;
     }
     
     points += greedyResult[0];
     dice -= greedyResult[1];
+    Cookies.set('points', points, { expires: midnight});
+    Cookies.set('dice', dice, { expires: midnight});
     updateScore(points);
 
     if (dice == 0)
@@ -59,17 +95,36 @@ function greedy(dice){
         console.log(rolls[i]);
     }
 
-    for (let i = 0; i < dice; i++){
+    for (let i = 0; i < 6; i++){
+        if (Cookies.get('diceImage') == null)
+        {
+            Cookies.set('diceImage', '', { expires: midnight});
+            Cookies.set('greenDice', '', { expires: midnight});
+        }
+
         const diceImage = document.createElement('img');
-        diceImage.src = diceImgs[rolls[i] - 1];
-        if (rolls[i] == 1 || rolls[i] == 5 || findCount(rolls[i], rolls) >= 3){
+        if (i > rolls.length - 1){
+            diceImage.src = diceImgs[6];
+            Cookies.set('diceImage', Cookies.get('diceImage') + ' ' + diceImage.src);
+        }
+        else {
+            diceImage.src = diceImgs[rolls[i] - 1];
+            Cookies.set('diceImage', Cookies.get('diceImage') + ' ' + diceImage.src);
+        }
+        if (rolls[i] == 1 || rolls[i] == 5 || findTriple(rolls[i], rolls, i)){
+            Cookies.set('greenDice', Cookies.get('greenDice') + ' ' + 'true');
             diceImage.style.backgroundColor = "#538d4e";
+        }
+        else {
+            Cookies.set('greenDice', Cookies.get('greenDice') + ' ' + 'false');
         }
 
         if (diceNumber >= 36){
             // reset all the dice
             diceContainers.forEach(clearDiceContainer);
             diceNumber = 0;
+            Cookies.set('diceImage', '');
+            Cookies.set('dice', 0);
         }
 
         diceContainers[diceNumber].appendChild(diceImage);
@@ -79,6 +134,7 @@ function greedy(dice){
     while (diceNumber % 6 != 0){
         diceNumber++;
     }
+    Cookies.set('diceNumber', diceNumber, { expires: midnight});
     let game = score(rolls);
 
     if (game[0] == 0){
@@ -95,6 +151,8 @@ function greedy(dice){
         }
         finalScoreMsg += '\r\n';
     }
+
+    Cookies.set('finalScoreMsg', finalScoreMsg, { expires: midnight});
     return game;
 }
 
@@ -148,6 +206,41 @@ function findCount(num, rolls){
     return count;
 }
 
+function findTriple(num, rolls, index){
+    let count = 0;
+
+    for (let i = 0; i < rolls.length; i++){
+        if (rolls[i] == num){
+            count++;
+        }
+    }
+
+    if (count >= 3 && count < 6){
+        if (count > 3){
+            for (let i = 0; i < rolls.length; i++){
+                if (rolls[i] == num){
+                    index++;
+                }
+            }
+            if (index > 3){
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            return true;
+        }
+    }
+    else if (count == 6){
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 function updateScore(score){
     if (typeof score === 'string'){
         scoreboard.textContent = score;
@@ -168,11 +261,13 @@ function updateScore(score){
 }
 
 function endGame(){
+    Cookies.set('gameover', 'true',{ expires: midnight});
     if (points == -1){
         updateScore('Skunked 😂');
     }
     rollButton.remove();
-    passButton.remove();
+    if (passButtonCreated)
+        passButton.remove();
     // Show result popup screen
     scoreModal();
 }
@@ -228,5 +323,19 @@ function shareMsg(){
     if (navigator.userAgent.match(/iPhone/i)){
         let formattedMsg = finalScoreMsg.replace(/\r\n/g, '%0a');
         window.open(`sms:?&body=${formattedMsg}`, '_self');
+    }
+    else {
+        alert('Sharing currently only works on iphone');
+    }
+}
+
+function deleteAllCookies() {
+    var cookies = document.cookie.split(";");
+
+    for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        var eqPos = cookie.indexOf("=");
+        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
     }
 }
