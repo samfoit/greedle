@@ -316,6 +316,8 @@ function scoreModal(){
     if (points != -1){
         finalScoreMsg += '%0aGreedle score: ' + points;
     }
+
+    countdownMidnight();
 }
 
 function shareMsg(){
@@ -326,6 +328,27 @@ function shareMsg(){
     }
     else {
         alert('Sharing currently only works on iphone');
+    }
+}
+
+function countdownMidnight(){
+    const timer = document.querySelector('#timer');
+
+    const interval = setInterval(countdown, 1);
+
+    function countdown(){
+        let now = new Date().getTime();
+        let timeleft = midnight - now;
+
+        let hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
+
+        timer.textContent = `${hours}:${minutes}:${seconds}`;
+
+        if (timer.style.display == 'block'){
+            clearInterval(interval);
+        }
     }
 }
 
