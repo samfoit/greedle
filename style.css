@@ -163,6 +163,21 @@ div {
     }
 }
 
+@keyframes fade-in {
+    0%{
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fade-in 200ms forwards;
+}
+
 .flip-in {
     animation: flip-in 250ms;
     animation-fill-mode: forwards;

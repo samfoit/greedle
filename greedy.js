@@ -10,7 +10,11 @@ const scoreboard = document.querySelector('.score');
 
 const helpButton = document.querySelector('.info');
 const helpModal = document.querySelector('#help-modal-container');
-helpButton.onclick = function () {helpModal.style.display = "block";};
+helpButton.onclick = function () {helpModal.style.display = "block";
+helpModal.classList.add('fade-in');
+setTimeout(() => {
+    helpModal.classList.remove('fade-in');
+}, 1000)};
 const closeHelpModal = document.querySelector('#close-info');
 closeHelpModal.onclick = function() {helpModal.style.display = "none";};
 
@@ -161,6 +165,7 @@ function greedy(dice){
             diceNumber = 0;
             Cookies.set('diceImage', '');
             Cookies.set('dice', 0);
+            Cookies.set('greenDice', '');
         }
     }
 
@@ -190,6 +195,8 @@ function greedy(dice){
 }
 
 function clearDiceContainer(item){
+    item.classList.remove(item.classList[2]);
+    item.classList.remove(item.classList[1]);
     let dice = item.lastElementChild;
     if (dice != null){
         item.removeChild(dice);
@@ -241,36 +248,34 @@ function findCount(num, rolls){
 
 function findTriple(num, rolls, index){
     let count = 0;
+    let iterations = 0;
 
     for (let i = 0; i < rolls.length; i++){
-        if (rolls[i] == num){
+        if (rolls[i] == num) {
             count++;
         }
     }
+    
+    if (count < 3) {
+        return false;
+    } else if (count == 3){
+        return true;
+    } else if (count > 3 && count < 6){
+        for (let i = 0; i < index + 1; i++){
+            if (rolls[i] == num){
+                // 1 2 2 4 2 2
+                iterations++;
+            }
+        }
 
-    if (count >= 3 && count < 6){
-        if (count > 3){
-            for (let i = 0; i < rolls.length; i++){
-                if (rolls[i] == num){
-                    index++;
-                }
-            }
-            if (index > 3){
-                return false;
-            }
-            else {
-                return true;
-            }
+        if (iterations > 3){
+            return false;
         }
         else {
             return true;
         }
-    }
-    else if (count == 6){
+    } else{
         return true;
-    }
-    else {
-        return false;
     }
 }
 
@@ -296,7 +301,9 @@ function updateScore(score){
 function endGame(delay){
     Cookies.set('gameover', 'true',{ expires: midnight});
     if (points == -1){
-        updateScore('Skunked 😂');
+        setTimeout(() => {
+            updateScore('Skunked 😂');
+        }, 2000);
     }
     rollButton.remove();
     if (passButtonCreated)
@@ -329,6 +336,7 @@ function scoreModal(){
 
     shareButton.onclick = function() {shareMsg(); };
     scoreModalContainer.style.display = 'block';
+    scoreModalContainer.classList.add('fade-in');
     closeScoreModal.onclick = function() {scoreModalContainer.style.display = 'none';};
     if (points == -1){
         pointsDisplay.textContent = '0';
@@ -340,6 +348,7 @@ function scoreModal(){
         let score = parseInt(pointsDisplay.textContent);
         if (score == points){
             clearInterval(id);
+            pointsDisplay.textContent = points + "!";
         }
         else {
             score += 1;
