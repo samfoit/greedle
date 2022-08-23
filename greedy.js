@@ -25,6 +25,20 @@ window.onclick = function(event) {
     }
 }
 
+const flipDice = (container, state, diceImg) => {
+    container.classList.add('flip-in');
+
+    setTimeout(() => {
+        container.classList.add(state);
+    }, 250);
+
+    setTimeout(() => {
+        container.classList.remove('flip-in');
+        container.classList.add('flip-out');
+        container.appendChild(diceImg);
+    }, 250);
+}
+
 // every dice element
 const diceContainers = document.querySelectorAll('.dice');
 
@@ -46,25 +60,24 @@ if (Cookies.get('points') != null){
     for (let i = 0; i < diceImages.length - 1; i++){
         const diceImage = document.createElement('img');
         diceImage.src = diceImages[i + 1];
-        if (greenDice[i + 1] == 'true'){
-            diceImage.style.backgroundColor = "#538d4e";
-        }
-        diceContainers[diceNumber].appendChild(diceImage);
+        flipDice(diceContainers[diceNumber], greenDice[i + 1], diceImage);
         diceNumber++;
     }
+
+    createPassButton();
 
     const pBoard = document.querySelector('.score');
     pBoard.textContent = points;
     finalScoreMsg = Cookies.get('finalScoreMsg');
 
     if (Cookies.get('gameover') != null){
-        endGame();
+        if (Cookies.get('points') == -1){
+            scoreboard.textContent = 'Skunked 😂';
+        }
+        endGame(750);
     }
 }
 
-// TODO: Add timer coutndown to midnight for next roll
-// TODO: Fade in roll up animation for score modal
-// TODO: Add a rolling animation for the dice
 function roll(){
     createPassButton();
 
@@ -73,7 +86,7 @@ function roll(){
     if (greedyResult[0] == 0){
         points = -1;
         Cookies.set('points', points, { expires: midnight});
-        endGame();
+        endGame(2000);
         return;
     }
     
@@ -81,7 +94,9 @@ function roll(){
     dice -= greedyResult[1];
     Cookies.set('points', points, { expires: midnight});
     Cookies.set('dice', dice, { expires: midnight});
-    updateScore(points);
+    setTimeout(() => {
+        updateScore(points);
+    }, 1000);
 
     if (dice == 0)
         dice = 6;
@@ -89,12 +104,16 @@ function roll(){
 
 
 function greedy(dice){
+    // blank array to store each dice roll
     let rolls = [];
+
+    // fills roll array based on active dice number
     for (let i = 0; i < dice; i++){
         rolls[i] = Math.floor((Math.random() * 6) + 1);
         console.log(rolls[i]);
     }
 
+    // loops through each resulting roll and assigns an image
     for (let i = 0; i < 6; i++){
         if (Cookies.get('diceImage') == null)
         {
@@ -103,6 +122,7 @@ function greedy(dice){
         }
 
         const diceImage = document.createElement('img');
+        // creates correct dice images based off roll
         if (i > rolls.length - 1){
             diceImage.src = diceImgs[6];
             Cookies.set('diceImage', Cookies.get('diceImage') + ' ' + diceImage.src);
@@ -111,24 +131,37 @@ function greedy(dice){
             diceImage.src = diceImgs[rolls[i] - 1];
             Cookies.set('diceImage', Cookies.get('diceImage') + ' ' + diceImage.src);
         }
+
+        // assigns colors and animations to dice tiles
         if (rolls[i] == 1 || rolls[i] == 5 || findTriple(rolls[i], rolls, i)){
             Cookies.set('greenDice', Cookies.get('greenDice') + ' ' + 'true');
-            diceImage.style.backgroundColor = "#538d4e";
+            setTimeout(() => {
+                flipDice(diceContainers[diceNumber], 'true', diceImage);
+                diceNumber++;
+            }, i * 300);
+        }
+        else if (i > rolls.length - 1){
+            Cookies.set('greenDice', Cookies.get('greenDice') + ' ' + 'blank');
+            setTimeout(() => {
+                flipDice(diceContainers[diceNumber], 'blank', diceImage);
+                diceNumber++;
+            }, i * 300);
         }
         else {
             Cookies.set('greenDice', Cookies.get('greenDice') + ' ' + 'false');
+            setTimeout(() => {
+                flipDice(diceContainers[diceNumber], 'false', diceImage);
+                diceNumber++;
+            }, i * 300);
         }
 
+        // resets all dice
         if (diceNumber >= 36){
-            // reset all the dice
             diceContainers.forEach(clearDiceContainer);
             diceNumber = 0;
             Cookies.set('diceImage', '');
             Cookies.set('dice', 0);
         }
-
-        diceContainers[diceNumber].appendChild(diceImage);
-        diceNumber++;
     }
 
     while (diceNumber % 6 != 0){
@@ -260,7 +293,7 @@ function updateScore(score){
     }
 }
 
-function endGame(){
+function endGame(delay){
     Cookies.set('gameover', 'true',{ expires: midnight});
     if (points == -1){
         updateScore('Skunked 😂');
@@ -269,7 +302,9 @@ function endGame(){
     if (passButtonCreated)
         passButton.remove();
     // Show result popup screen
-    scoreModal();
+    setTimeout(() => {
+        scoreModal();
+    }, delay);
 }
 
 function createPassButton(){
@@ -277,7 +312,7 @@ function createPassButton(){
         let pButton = document.createElement('button');
         pButton.classList.add("pass-button");
         pButton.textContent = "Pass";
-        pButton.onclick = function() { endGame() };
+        pButton.onclick = function() { endGame(0) };
         const buttonContainer = document.querySelector('.buttons');
         buttonContainer.appendChild(pButton);
         passButton = document.querySelector('.pass-button');
@@ -296,7 +331,7 @@ function scoreModal(){
     scoreModalContainer.style.display = 'block';
     closeScoreModal.onclick = function() {scoreModalContainer.style.display = 'none';};
     if (points == -1){
-        pointsDisplay.textContent = '🦨';
+        pointsDisplay.textContent = '0';
     }
     else {
         const id = setInterval(increment, 7);

@@ -29,7 +29,7 @@ div {
     box-sizing: border-box;
     width: 350px;
     height: 420px;
-    margin-top: 5em;
+    margin-top: 2.5em;
 }
 
 .dice-roll-row {
@@ -145,3 +145,52 @@ div {
     cursor:pointer;
 }
 
+@keyframes flip-in {
+    from{
+        transform: rotateX(0deg);
+    }
+    to {
+        transform: rotateX(-90deg);
+    }
+}
+
+@keyframes flip-out {
+    from{
+        transform: rotateX(-90deg);
+    }
+    to {
+        transform: rotateX(0deg);
+    }
+}
+
+.flip-in {
+    animation: flip-in 250ms;
+    animation-fill-mode: forwards;
+}
+
+.flip-out {
+    animation: flip-out 250ms;
+    animation-fill-mode: forwards;
+}
+
+.true {
+    background-color: #538d4e;
+    border-color: #538d4e;
+}
+
+.false {
+    background-color: #3a3a3c;
+    border-color: #3a3a3c;
+}
+
+.blank {
+    border-color: #121213;
+}
+
+.share-button {
+    border: none;
+    background-color: #363636;
+    color: #ffffff;
+    border-radius: 2px;
+    padding: 5px 20px;
+}
