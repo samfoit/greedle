@@ -62,9 +62,9 @@ if (Cookies.get('points') != null){
     }
 }
 
-// TODO: Yellow with a bump for 1s
+// TODO: Add timer coutndown to midnight for next roll
+// TODO: Fade in roll up animation for score modal
 // TODO: Add a rolling animation for the dice
-// TODO: Add animation for the score modal popup
 function roll(){
     createPassButton();
 

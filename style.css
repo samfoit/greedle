@@ -124,8 +124,24 @@ div {
 }
 
 .close:hover,
-.close:focus {
+.close:focus,
+.info:hover,
+.info:focus {
     color: #000;
     text-decoration: none;
     cursor: pointer;
 }
+
+.info:hover,
+.info:focus {
+    color: #000;
+    cursor: pointer;
+}
+
+.roll-button:hover,
+.roll-button:focus,
+.pass-button:hover,
+.pass-button:focus {
+    cursor:pointer;
+}
+
