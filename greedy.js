@@ -4,6 +4,7 @@ const diceImgs = ["images/dice1.png", "images/dice2.png", "images/dice3.png", "i
 const diceText = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "⚫️", "🦨"];
 
 // buttons
+const buttonDiv = document.querySelector('.buttons');
 const rollButton = document.querySelector('.roll-button');
 rollButton.onclick = function() {roll();};
 const scoreboard = document.querySelector('.score');
@@ -84,6 +85,8 @@ if (Cookies.get('points') != null){
 
 function roll(){
     createPassButton();
+
+    buttonDiv.style.display = 'none';
 
     let greedyResult = greedy(dice);
 
@@ -288,6 +291,7 @@ function updateScore(score){
        function incrementScoreboard(){
         let score = parseInt(scoreboard.textContent);
         if (score == points){
+            buttonDiv.style.display = 'flex';
             clearInterval(id);
         }
         else {

@@ -113,7 +113,7 @@ div {
     border: 1px solid #1a1a1b;
     border-radius: 8px;
     color: white;
-    width: 50%;
+    width: 30%;
 }
 
 .close {
@@ -208,4 +208,10 @@ div {
     color: #ffffff;
     border-radius: 2px;
     padding: 5px 20px;
+}
+
+@media only screen and (hover: none) and (pointer: coarse){
+    .modal-content {
+        width: 75%;
+    }
 }
