@@ -55,7 +55,7 @@ let passButtonCreated = false;
 
 
 // check if cookies exist
-if (Cookies.get('points') != null){
+if (Cookies.get('dice') != null){
     points = parseInt(Cookies.get('points'));
     dice = parseInt((Cookies.get('dice')));
     let diceImages = Cookies.get('diceImage');
