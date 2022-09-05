@@ -1,3 +1,5 @@
+// used to check if local storage keys have expired
+getWithExpiry(localStorage.getItem(localStorage.key(0)));
 
 // array of dice images
 const diceImgs = ["images/dice1.png", "images/dice2.png", "images/dice3.png", "images/dice4.png", "images/dice5.png", "images/dice6.png", "images/blank.png"];
@@ -54,14 +56,16 @@ let points = 0;
 let passButtonCreated = false;
 
 
-// check if cookies exist
-if (Cookies.get('dice') != null){
-    points = parseInt(Cookies.get('points'));
-    dice = parseInt((Cookies.get('dice')));
-    let diceImages = Cookies.get('diceImage');
+// check if localstorage key exist
+if (localStorage.getItem('dice') != null){
+    points = JSON.parse(localStorage.getItem('points')).value;
+    dice = JSON.parse((localStorage.getItem('dice'))).value;
+
+    let diceImages = JSON.parse(localStorage.getItem('diceImage')).value;
     diceImages = diceImages.split(' ');
-    let greenDice = Cookies.get('greenDice');
+    let greenDice = JSON.parse(localStorage.getItem('greenDice')).value;
     greenDice = greenDice.split(' ');
+
     for (let i = 0; i < diceImages.length - 1; i++){
         const diceImage = document.createElement('img');
         diceImage.src = diceImages[i + 1];
@@ -73,10 +77,10 @@ if (Cookies.get('dice') != null){
 
     const pBoard = document.querySelector('.score');
     pBoard.textContent = points;
-    finalScoreMsg = Cookies.get('finalScoreMsg');
+    finalScoreMsg = JSON.parse(localStorage.getItem('finalScoreMsg')).value;
 
-    if (Cookies.get('gameover') != null){
-        if (Cookies.get('points') == -1){
+    if (localStorage.getItem('gameover') != null){
+        if (JSON.parse(localStorage.getItem('points')).value == -1){
             scoreboard.textContent = 'Skunked 😂';
         }
         endGame(750);
@@ -92,15 +96,15 @@ function roll(){
 
     if (greedyResult[0] == 0){
         points = -1;
-        Cookies.set('points', points, { expires: midnight});
+        setWithExpiry('points', points, midnight);
         endGame(2000);
         return;
     }
     
     points += greedyResult[0];
     dice -= greedyResult[1];
-    Cookies.set('points', points, { expires: midnight});
-    Cookies.set('dice', dice, { expires: midnight});
+    setWithExpiry('points', points, midnight);
+    setWithExpiry('dice', dice, midnight);
     setTimeout(() => {
         updateScore(points);
     }, 1000);
@@ -122,40 +126,41 @@ function greedy(dice){
 
     // loops through each resulting roll and assigns an image
     for (let i = 0; i < 6; i++){
-        if (Cookies.get('diceImage') == null)
+        if (getWithExpiry('diceImage') == null)
         {
-            Cookies.set('diceImage', '', { expires: midnight});
-            Cookies.set('greenDice', '', { expires: midnight});
+            console.log('dice image key is null');
+            setWithExpiry('diceImage', '', midnight);
+            setWithExpiry('greenDice', '', midnight);
         }
 
         const diceImage = document.createElement('img');
         // creates correct dice images based off roll
         if (i > rolls.length - 1){
             diceImage.src = diceImgs[6];
-            Cookies.set('diceImage', Cookies.get('diceImage') + ' ' + diceImage.src);
+            setWithExpiry('diceImage', JSON.parse(localStorage.getItem('diceImage')).value + ' ' + diceImage.src, midnight);
         }
         else {
             diceImage.src = diceImgs[rolls[i] - 1];
-            Cookies.set('diceImage', Cookies.get('diceImage') + ' ' + diceImage.src);
+            setWithExpiry('diceImage', JSON.parse(localStorage.getItem('diceImage')).value + ' ' + diceImage.src, midnight);
         }
 
         // assigns colors and animations to dice tiles
         if (rolls[i] == 1 || rolls[i] == 5 || findTriple(rolls[i], rolls, i)){
-            Cookies.set('greenDice', Cookies.get('greenDice') + ' ' + 'true');
+            setWithExpiry('greenDice', JSON.parse(localStorage.getItem('greenDice')).value + ' ' + 'true', midnight);
             setTimeout(() => {
                 flipDice(diceContainers[diceNumber], 'true', diceImage);
                 diceNumber++;
             }, i * 300);
         }
         else if (i > rolls.length - 1){
-            Cookies.set('greenDice', Cookies.get('greenDice') + ' ' + 'blank');
+            setWithExpiry('greenDice', JSON.parse(localStorage.getItem('greenDice')).value + ' ' + 'blank', midnight);
             setTimeout(() => {
                 flipDice(diceContainers[diceNumber], 'blank', diceImage);
                 diceNumber++;
             }, i * 300);
         }
         else {
-            Cookies.set('greenDice', Cookies.get('greenDice') + ' ' + 'false');
+            setWithExpiry('greenDice', JSON.parse(localStorage.getItem('greenDice')).value + ' ' + 'false', midnight);
             setTimeout(() => {
                 flipDice(diceContainers[diceNumber], 'false', diceImage);
                 diceNumber++;
@@ -166,16 +171,16 @@ function greedy(dice){
         if (diceNumber >= 36){
             diceContainers.forEach(clearDiceContainer);
             diceNumber = 0;
-            Cookies.set('diceImage', '');
-            Cookies.set('dice', 0);
-            Cookies.set('greenDice', '');
+            setWithExpiry('diceImage', '', midnight);
+            setWithExpiry('dice', 0, midnight);
+            setWithExpiry('greenDice', '', midnight);
         }
     }
 
     while (diceNumber % 6 != 0){
         diceNumber++;
     }
-    Cookies.set('diceNumber', diceNumber, { expires: midnight});
+    setWithExpiry('diceNumber', diceNumber, midnight);
     let game = score(rolls);
 
     if (game[0] == 0){
@@ -193,7 +198,7 @@ function greedy(dice){
         finalScoreMsg += '\r\n';
     }
 
-    Cookies.set('finalScoreMsg', finalScoreMsg, { expires: midnight});
+    setWithExpiry('finalScoreMsg', finalScoreMsg, midnight);
     return game;
 }
 
@@ -303,7 +308,7 @@ function updateScore(score){
 }
 
 function endGame(delay){
-    Cookies.set('gameover', 'true',{ expires: midnight});
+    setWithExpiry('gameover', 'true', midnight);
     if (points == -1){
         setTimeout(() => {
             updateScore('Skunked 😂');
@@ -409,4 +414,35 @@ function deleteAllCookies() {
         var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
         document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
     }
+}
+
+function setWithExpiry(key, value, expireTime) {
+    // `item` is an object which contains the original value
+    // as well as the time when it's supposed to expire
+    const item = {
+        value: value,
+        expiry: expireTime.getTime(),
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+}
+
+function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    // if the item doesn't exist, return null
+    if (!itemStr) {
+        return null
+    }
+
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    // compare the expiry time of the item with the current time
+    if (now.getTime() > item.expiry) {
+        // If the item is expired, delete the item from storage
+        // and return null
+        localStorage.clear();
+        return null
+    }
+    return item.value
 }
