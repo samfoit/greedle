@@ -1,5 +1,5 @@
 // used to check if local storage keys have expired
-getWithExpiry(localStorage.getItem(localStorage.key(0)));
+getWithExpiry(localStorage.key(0));
 
 // array of dice images
 const diceImgs = ["images/dice1.png", "images/dice2.png", "images/dice3.png", "images/dice4.png", "images/dice5.png", "images/dice6.png", "images/blank.png"];
@@ -54,7 +54,6 @@ let diceNumber = 0;
 let dice = 6;
 let points = 0;
 let passButtonCreated = false;
-
 
 // check if localstorage key exist
 if (localStorage.getItem('dice') != null){
@@ -427,7 +426,7 @@ function setWithExpiry(key, value, expireTime) {
 }
 
 function getWithExpiry(key) {
-    const itemStr = localStorage.getItem(key)
+    const itemStr = localStorage.getItem(key);
 
     // if the item doesn't exist, return null
     if (!itemStr) {
@@ -438,7 +437,7 @@ function getWithExpiry(key) {
     const now = new Date()
 
     // compare the expiry time of the item with the current time
-    if (now.getTime() > item.expiry) {
+    if (now > item.expiry) {
         // If the item is expired, delete the item from storage
         // and return null
         localStorage.clear();
