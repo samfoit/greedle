@@ -290,7 +290,7 @@ function updateScore(score){
     if (typeof score === 'string'){
         scoreboard.textContent = score;
     } else {
-       const id = setInterval(incrementScoreboard, 10);
+       const id = setInterval(incrementScoreboard, 1);
 
        function incrementScoreboard(){
         let score = parseInt(scoreboard.textContent);
@@ -350,7 +350,7 @@ function scoreModal(){
         pointsDisplay.textContent = '0';
     }
     else {
-        const id = setInterval(increment, 7);
+        const id = setInterval(increment, 1);
 
        function increment(){
         let score = parseInt(pointsDisplay.textContent);
