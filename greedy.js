@@ -56,9 +56,11 @@ let points = 0;
 let passButtonCreated = false;
 
 // check if localstorage key exist
-if (localStorage.getItem('dice') != null){
+if (localStorage.getItem('points') != null){
     points = JSON.parse(localStorage.getItem('points')).value;
-    dice = JSON.parse((localStorage.getItem('dice'))).value;
+    if (localStorage.getItem('dice') != null){
+        dice = JSON.parse((localStorage.getItem('dice'))).value;
+    }
 
     let diceImages = JSON.parse(localStorage.getItem('diceImage')).value;
     diceImages = diceImages.split(' ');
@@ -119,7 +121,13 @@ function greedy(dice){
 
     // fills roll array based on active dice number
     for (let i = 0; i < dice; i++){
-        rolls[i] = Math.floor((Math.random() * 6) + 1);
+        if (i + 1 == 1){
+            rolls[i] = 4;
+        } else if (i + 1 == 5){
+            rolls[i] = 3;
+        } else {
+            rolls[i] = i + 1;
+        }
         console.log(rolls[i]);
     }
 
@@ -408,17 +416,6 @@ function countdownMidnight(){
         if (timer.style.display == 'block'){
             clearInterval(interval);
         }
-    }
-}
-
-function deleteAllCookies() {
-    var cookies = document.cookie.split(";");
-
-    for (var i = 0; i < cookies.length; i++) {
-        var cookie = cookies[i];
-        var eqPos = cookie.indexOf("=");
-        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
     }
 }
 
