@@ -121,21 +121,13 @@ function greedy(dice){
 
     // fills roll array based on active dice number
     for (let i = 0; i < dice; i++){
-        if (i + 1 == 1){
-            rolls[i] = 4;
-        } else if (i + 1 == 5){
-            rolls[i] = 3;
-        } else {
-            rolls[i] = i + 1;
-        }
-        console.log(rolls[i]);
+        rolls[i] = Math.floor((Math.random() * 6) + 1);
     }
 
     // loops through each resulting roll and assigns an image
     for (let i = 0; i < 6; i++){
         if (getWithExpiry('diceImage') == null)
         {
-            console.log('dice image key is null');
             setWithExpiry('diceImage', '', midnight);
             setWithExpiry('greenDice', '', midnight);
         }
