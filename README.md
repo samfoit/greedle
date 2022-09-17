@@ -13,4 +13,4 @@ Skills Demonstrated:
 
 
 Play Here:
-https://samfoit.github.io/greedle-demo/
+http://greedle.net/
