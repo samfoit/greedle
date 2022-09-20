@@ -1,4 +1,4 @@
-# greedle-demo
+# greedle
 
 Created an exact Wordle clone based off the dice game Greedy to test web developoment skills. This project was built using vanilla HTML 5, CSS, and Javascript.
 
